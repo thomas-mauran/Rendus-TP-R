@@ -1,0 +1,125 @@
+---
+title: "TP 1 - Thomas Mauran"
+author: "Thomas Mauran"
+date: "28/03/2023"
+output: html_document
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+# TP 1 Poissons du lez {#sec-tp-1 style="text-align: center"}
+
+![](https://media.tenor.com/Mb5on1J7rsYAAAAd/fish-sucking.gif){style="tex-align: center"
+width="200"}
+
+## Experience statistique {style="text-align: left"}
+
+**Individu**: Poisson
+
+**Population**: Le lez
+
+**Échantillon**: 100 poissons dans l'aquarium
+
+**Taille**: 100
+
+**Variable**: Couleur du poisson
+
+### 
+
+Ici la variable a bien les modalités suivantes:\
+
+**Incompatible:** Un poisson ne peut avoir qu'une seule couleur dans
+cette étude pour simpiflier la representation
+
+**Exhaustive:** Visiblement le lez ne contient que des poissons rouges,
+vert ou bleus, dans les faits je ne suis pas certains que ce soit le cas
+
+**Sans ambigité:** En partant du principe que les 3 couleurs de poissons
+sont rouge vert et bleu, il n'y a pas d'ambiguité sur la couleur du
+poisson, dans les faits on pourrait prendre la couleur la plus presente
+sur le poisson
+
+## Simulation {style="text-align: left"}
+
+```{r}
+set.seed(2002)
+
+lez <- c(rep("red", 2000),
+         rep("green", 3000),
+         rep("blue", 5000))
+
+
+n_exp <- 100                            ## Nombre de fois où je tire un poisson
+
+echantillon <- sample(lez,            ## échantillonne les poissons
+                      n_exp,           ## n_exp fois
+                      replace = FALSE) ## sans remise
+
+```
+
+**Résumé**
+
+```{r}
+res <- table(echantillon)
+res
+```
+
+La fréquence
+
+```{r}
+freq <-  prop.table(table(echantillon))
+freq
+```
+
+On a eu une proportion de poisson bleu plus elevés, ce qui semble
+logique vu qu'il y a plus de poisson bleus dans le lez, notre "chance"
+de piocher un poisson bleu est donc plus importante que pour un poisson
+vert ou rouge.
+
+**Graphique**
+
+```{r}
+barplot(res, col = names(res) )
+```
+
+### Questions
+
+| Que se passe-t-il lorsque vous compilez votre document plusieurs fois de suite ? Les résultats numériques changent-ils ? Est-ce normal ? Utilisez la fonction `set.seed` pour produire un document reproductible.
+
+Quand on compile plusieurs fois on obtient toujours les memes résultats
+car la seed est la meme
+
+### Avec 10 poissons 
+
+```{r}
+set.seed(12)
+
+n_exp <- 10                           ## Nombre de fois où je tire un poisson
+
+echantillon <- sample(lez,            ## échantillonne les poissons
+                      n_exp,           ## n_exp fois
+                      replace = FALSE) ## sans remise
+res_10 <- table(echantillon)
+barplot(res_10, col = names(res_10) )
+```
+
+Ici on remarque que le graphique ne represente pas bien du tout notre
+population, c'est du au fait que l'échantillon soit trop petit
+
+### Avec 1000 poissons
+
+```{r}
+
+n_exp <- 100                           ## Nombre de fois où je tire un poisson
+
+echantillon <- sample(lez,            ## échantillonne les poissons
+                      n_exp,           ## n_exp fois
+                      replace = FALSE) ## sans remise
+res_100 <- table(echantillon)
+barplot(res_100, col = names(res_100) )
+```
+
+Ici on remarque que le résultat represente déjà bien mieux la population
+pour les poissons bleus, pour avoir une idée plus précise des poissons
+verts et rouge il faudrait un échantillon encore plus grand

@@ -57,22 +57,23 @@ nrow(penguins_nomissing) # connaitre le nombre de ligne dans un tableau
 
 ### **Experience statistique**
 
--    **quelle question tente-t-on de répondre ?**
+-   **quelle question tente-t-on de répondre ?**
 
-    On cherche à determiner le nombre d'individus de chaque espèce de pingouins présente dans l'archipel
+```         
+On cherche à determiner le nombre d'individus de chaque espèce de pingouins présente dans l'archipel
+```
 
 -   **quels sont les *individus* ?**
 
     Les pingouins
 
--   **quelle est la *population* ? l\'*échantillon* ?**
+-   **quelle est la *population* ? l'*échantillon* ?**
 
     **La population:** L'ensemble des pingouins de l'archipel
 
     **L'échantillon:** 333 pingouins de l'archipels
 
--   **quelle est la *variable* ? quelles sont ses
-    *modalités* ?**
+-   **quelle est la *variable* ? quelles sont ses *modalités* ?**
 
     Ici on considérera la variable comme étant l'espece de pingouin.
 
@@ -91,7 +92,6 @@ On a 146 Adelie, 119 Gentoo et 68 Chinstrap
 ### Diagramme en bar
 
 ```{r}
-colnames(tt) <- c("species", "number")
 ggplot(penguins_nomissing,
        aes(x = species)) +
 
@@ -101,7 +101,6 @@ ggplot(penguins_nomissing,
 ### Nettoyage
 
 ```{r}
-colnames(tt) <- fct_relevel(c("species", "number"))
 
 ggplot(penguins_nomissing,
        aes(x = fct_relevel(species, "Chinstrap", "Gentoo", "Adelie"))) +
@@ -114,7 +113,6 @@ ggplot(penguins_nomissing,
 ### Ajout d'information
 
 ```{r}
-colnames(tt) <- fct_relevel(c("species", "number"))
 
 ggplot(penguins_nomissing,
        aes(x = fct_relevel(species, "Chinstrap", "Gentoo", "Adelie"),
@@ -139,11 +137,17 @@ ggplot(penguins_nomissing,
 
 ## Parlements
 
-```{r}
+```{r, warning=FALSE}
+
 library(readxl)
 library(here)
+library(readxl)
 
-data <- read_xlsx(here("data", "women_in_parliament-historical_database-1945_to_2018.xlsx"))
+    
+data <- read_xlsx(here("data", "women_in_parliament-historical_database-1945_to_2018.xlsx"),
+                  col_types = c("text", "text", "text", 
+        "numeric", "text", "text", "numeric", 
+        "numeric", "numeric", "text"))
 data
 ```
 
@@ -151,15 +155,243 @@ Les données pour chaque ligne:
 
 Le pays, la région dans le pays, si c'est une Election ou une réelection, l'année, le mois, le type de chambre, le nombre de sièges dans la chambre, le nombre de femmes, le % de femme t des notres qui peuvent donner des infos sur le type d'assemblée
 
-### Assemblée constituante française 
+### Assemblée constituante française
 
 4eme république: 27 octobre 1946
 
 ```{r}
 subsetData <- subset(data, Year==1946 & Country=="France" & NOTES=="Constitutional Assembly")
 subsetData
-
 percentOfWomen <- subsetData[c("% Of Women in Chamber")] # le pourcentage de femmes
 
-men = 1 - percentOfWomen
+men <- 1 - percentOfWomen
+men # pourcentage d'homme
 ```
+
+### Diagramme en barre
+
+```{r}
+library(ggplot2)
+subsetData$homme <- 1 - subsetData$`% Of Women in Chamber`
+
+smallTable <- data.frame(category= c("Women", "Men"),
+                         percent = c(subsetData$`% Of Women in Chamber`,subsetData$homme))
+smallTable
+ggplot(smallTable,
+       aes(x = 1, 
+           y = percent,
+           fill=category), position = "fill") +
+  geom_col(position = "stack") +
+  scale_fill_manual(values = c("blue", "pink")) +
+  labs(x = "", y = "Percent of Chamber Members") +
+  theme_classic()
+
+```
+
+Ici je trouve cela plus pertinent de representer les données das un graph stacké pour bien mettre en exergue la proportion d'homme bien plus importante
+
+### Graph en secteur
+
+```{r}
+library(ggplot2)
+library(ggforce)
+
+subsetData$homme <- 1 - subsetData$`% Of Women in Chamber`
+
+smallTable <- data.frame(category= c("Women", "Men"),
+                         percent = c(subsetData$`% Of Women in Chamber`,subsetData$homme))
+
+pie <- ggplot(smallTable,
+               aes(x0 = 0, y0 = 0, r0 = 0, r = 1,
+                   amount = percent,
+                   fill = fct_relevel(category, "Women", "Men"))) +
+  coord_fixed() + 
+  ggtitle("Diagramme en secteurs") + 
+  geom_arc_bar(stat = "pie", color = "white", size = 0.2) + 
+  scale_fill_manual(values = c("#FF69B4", "#4169E1")) +
+  theme_void() +
+  theme(plot.title = element_text(size = 20, hjust = 0.5),
+        legend.position = "right",
+        legend.text = element_text(size = 14),
+        legend.title = element_blank(),
+        axis.title = element_blank())
+
+pie
+
+```
+
+**Proportion de femme dans l'assemblée constituante de la cinquième république**
+
+Date: adoptée le 28 septembre 1958, promulguée le 4 octobre 1958
+
+j'ai prit le type de chambre lower, je n'ai pas pu trouver la différence entre lower et upper mais lower avait plus de siège donc je l'ai selectionné
+
+```{r}
+subsetData5eme <- subset(data, Year==1958 & Country=="France" & `Chamber Type`=="Lower")
+subsetData5eme
+percentOfWomen <- subsetData[c("% Of Women in Chamber")] # le pourcentage de femmes
+
+subsetData5eme$homme <- 1 - subsetData5eme$`% Of Women in Chamber`
+
+smallTable <- data.frame(category= c("Women", "Men"),
+                         percent = c(subsetData5eme$`% Of Women in Chamber`,subsetData5eme$homme))
+
+pie <- ggplot(smallTable,
+               aes(x0 = 0, y0 = 0, r0 = 0, r = 1,
+                   amount = percent,
+                   fill = fct_relevel(category, "Women", "Men"))) +
+  coord_fixed() + 
+  ggtitle("Diagramme en secteurs") + 
+  geom_arc_bar(stat = "pie", color = "white", size = 0.2) + 
+  scale_fill_manual(values = c("#FF69B4", "#4169E1")) +
+  theme_void() +
+  theme(plot.title = element_text(size = 20, hjust = 0.5),
+        legend.position = "right",
+        legend.text = element_text(size = 14),
+        legend.title = element_blank(),
+        axis.title = element_blank())
+
+pie
+```
+
+## Evolution de la proportion de femmes dans l\'assemblée basse Colombienne de 1964 à 2014
+
+```{r}
+subsetDataColombia <- subset(data,  Country=="Colombia" & `Chamber Type` == "Lower")
+subsetDataColombia
+```
+
+### Données 
+
+```{r}
+subsetDataColombia$homme <- 1 - subsetDataColombia$`% Of Women in Chamber`
+
+smallTableColombia <- data.frame(
+  year = subsetDataColombia$Year,
+  category = c(rep("Women", length(subsetDataColombia$`% Of Women in Chamber`)),
+               rep("Men", length(subsetDataColombia$homme))),
+  percent = c(subsetDataColombia$`% Of Women in Chamber`, subsetDataColombia$homme)
+)
+```
+
+### Diagramme barre empilées 
+
+```{r}
+ggplot(smallTableColombia,
+       aes(x = year, y = percent, fill = category)) +
+  geom_bar(position = "stack", stat = "identity") +
+  scale_fill_manual(values = c("pink", "blue")) +
+  labs(x = "", y = "Percent of Chamber Members") +
+  theme_classic()
+```
+
+### Diagramme en secteur 
+
+```{r}
+pie <- ggplot(smallTableColombia,
+               aes(x0 = year, y0 = year, r0 = 70, r = 0,
+                   amount = percent,
+                   fill = fct_relevel(category, "Women", "Men"))) +
+  coord_fixed() + 
+  ggtitle("Evolution de la proportion de femmes dans l’assemblée basse Colombienne \n de 1964 à 2014") + 
+  geom_arc_bar(stat = "pie", color = "white", size = 0.2) + 
+  scale_fill_manual(values = c("pink", "blue")) +
+  theme_void() +
+  theme(plot.title = element_text(size = 12, hjust = 0.5),
+        legend.position = "right",
+        legend.text = element_text(size = 10),
+        legend.title = element_blank(),
+        axis.title = element_blank()) +
+  facet_wrap(~year, ncol = 4)
+
+pie
+```
+
+## Autres questions 
+
+**Question:** Evolution de la proportion de femmes dans l'assemblée basse Italienne de 1948 à 2008
+
+**Data**
+
+```{r}
+subsetDataItalie <- subset(data, (Year == "1948" | Year == "1976" | Year == "2008") &
+                                Country == "Italy" & `Chamber Type` == "Lower"
+                         )
+subsetDataItalie
+
+```
+
+**Premier graph**
+
+```{r}
+library(ggplot2)
+
+subsetDataItalie$homme <- 1 - subsetDataItalie$`% Of Women in Chamber`
+
+smallDataItalie <- data.frame(
+  year = c("1948", "1976", "2008"),
+  category = c(rep("Women", length(subsetDataItalie$`% Of Women in Chamber`)),
+               rep("Men", length(subsetDataItalie$homme))),
+  percent = c(subsetDataItalie$`% Of Women in Chamber`, subsetDataItalie$homme)
+)
+smallDataItalie
+ggplot(smallDataItalie,
+       aes(x = year, 
+           y = percent,
+           fill = fct_relevel(category, "Women", "Men"))) +
+  coord_fixed() + 
+  ggtitle("Evolution de la proportion de femmes dans l’assemblée basse Italienne \n de 1948 à 2008") + 
+  geom_col(position = "dodge") + 
+  scale_fill_manual(values = c("pink", "blue"))
+
+
+
+```
+
+```{r}
+
+subsetDataItaliePie <- subset(data,
+                                Country == "Italy" & `Chamber Type` == "Lower"
+                         )
+subsetDataItaliePie
+
+subsetDataItaliePie$homme <- 1 - subsetDataItaliePie$`% Of Women in Chamber`
+
+smallTableItalie <- data.frame(
+  year = subsetDataItaliePie$Year,
+  category = c(rep("Women", length(subsetDataItaliePie$`% Of Women in Chamber`)),
+               rep("Men", length(subsetDataItaliePie$homme))),
+  percent = c(subsetDataItaliePie$`% Of Women in Chamber`, subsetDataItaliePie$homme)
+)
+smallTableColombia
+pie <- ggplot(smallTableItalie,
+               aes(x0 = year, y0 = year, r0 = 70, r = 0,
+                   amount = percent,
+                   fill = fct_relevel(category, "Women", "Men"))) +
+  coord_fixed() + 
+  ggtitle("Evolution de la proportion de femmes dans l’assemblée basse Italienne \n de 1948 à 2008") + 
+  geom_arc_bar(stat = "pie", color = "white", size = 0.2) + 
+  scale_fill_manual(values = c("pink", "blue")) +
+  theme_void() +
+  theme(plot.title = element_text(size = 12, hjust = 0.5),
+        legend.position = "right",
+        legend.text = element_text(size = 10),
+        legend.title = element_blank(),
+        axis.title = element_blank()) +
+  facet_wrap(~year, ncol = 4)
+
+pie
+```
+
+**Conclusion \
+**
+
+Dans la première section, j'ai exploré les données en me concentrant sur un pays donné à une année donnée. Ensuite, dans la seconde section, j'ai examiné les données d'un pays donné au fil du temps.
+
+J'ai décidé de poser ma propre question sur les données en utilisant les exemples donnés. J'ai choisi de me demander quelle était la proportion de femmes dans les chambres basses d'Italie de 1948 à 2008. Pour répondre à cette question, j'ai créé un graphique en utilisant les données correspondantes.
+
+Tout d'abord, j'ai essayé de représenter les données sous forme de diagramme en barres. Cependant, le résultat n'était pas satisfaisant, car le graphique ne permettait pas une comparaison claire des proportions de femmes et d'hommes dans les différentes années. J'ai donc décidé de représenter les données sous forme de diagramme circulaire.
+
+Le graphique montre l'évolution de la proportion de femmes dans l'assemblée basse italienne de 1948 à 2008. Les données sont présentées sous forme de pourcentages, avec la proportion de femmes en rose et celle des hommes en bleu. Chaque année est représentée dans un cercle séparé, permettant de comparer facilement les proportions entre les différentes années.
+
+En somme, la représentation choisie permet une comparaison facile des proportions de femmes et d'hommes dans les différentes années, permettant ainsi de répondre à la question posée de manière claire et concise

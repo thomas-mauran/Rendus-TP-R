@@ -1,0 +1,165 @@
+---
+title: "TP_2"
+author: "Thomas Mauran"
+date: "2023-03-30"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+# TP 2
+
+```{r}
+boxoffice <- data.frame (
+  country = c("USA", "FRA", "UK", "IT"),
+  number = c(51, 45, 03, 01)
+)
+```
+
+**Diagramme en barre**
+
+```{r}
+ggplot(boxoffice,
+       aes(x = country,
+           y = number)) + 
+  geom_col()
+```
+
+**Trier les valeurs par odre croissant + clean graph**
+
+```{r}
+library(forcats)
+
+# On transforme en facteur
+factor(boxoffice$country)
+
+orderedList <- fct_reorder(boxoffice$country, boxoffice$number) # -boxoffice$number => décroissant
+
+ggplot(boxoffice,
+       aes(x = orderedList,
+           y = number))+
+  geom_col() +
+  xlab("Country") +
+  ylab("Number of films")+ 
+  theme_minimal() +
+  ggtitle("Pays de production des cent films ayant fait le plus d'entrées au cinéma en France depuis 1930")
+```
+
+## Pingouins
+
+```{r}
+library(palmerpenguins)
+penguins_nomissing <- na.omit(penguins) # We want to have data without missing lines
+head(penguins_nomissing)
+
+nrow(penguins_nomissing) # connaitre le nombre de ligne dans un tableau 
+```
+
+### **Experience statistique**
+
+-    **quelle question tente-t-on de répondre ?**
+
+    On cherche à determiner le nombre d'individus de chaque espèce de pingouins présente dans l'archipel
+
+-   **quels sont les *individus* ?**
+
+    Les pingouins
+
+-   **quelle est la *population* ? l\'*échantillon* ?**
+
+    **La population:** L'ensemble des pingouins de l'archipel
+
+    **L'échantillon:** 333 pingouins de l'archipels
+
+-   **quelle est la *variable* ? quelles sont ses
+    *modalités* ?**
+
+    Ici on considérera la variable comme étant l'espece de pingouin.
+
+    Modalité: Chinstrap, gentoo adélie
+
+### Comptage
+
+```{r}
+sum(penguins_nomissing$species == "Adelie")
+sum(penguins_nomissing$species == "Gentoo")
+sum(penguins_nomissing$species == "Chinstrap")
+```
+
+On a 146 Adelie, 119 Gentoo et 68 Chinstrap
+
+### Diagramme en bar
+
+```{r}
+colnames(tt) <- c("species", "number")
+ggplot(penguins_nomissing,
+       aes(x = species)) +
+
+  geom_bar()
+```
+
+### Nettoyage
+
+```{r}
+colnames(tt) <- fct_relevel(c("species", "number"))
+
+ggplot(penguins_nomissing,
+       aes(x = fct_relevel(species, "Chinstrap", "Gentoo", "Adelie"))) +
+      xlab("Species") +
+  ylab("Number")+ 
+  geom_bar() 
+
+```
+
+### Ajout d'information
+
+```{r}
+colnames(tt) <- fct_relevel(c("species", "number"))
+
+ggplot(penguins_nomissing,
+       aes(x = fct_relevel(species, "Chinstrap", "Gentoo", "Adelie"),
+           fill = sex)) +
+      xlab("Species") +
+  ylab("Number")+ 
+  geom_bar(position = "dodge") 
+```
+
+**Variation**
+
+```{r}
+colnames(tt) <- fct_relevel(c("species", "number"))
+
+ggplot(penguins_nomissing,
+       aes(x = fct_relevel(species, "Chinstrap", "Gentoo", "Adelie"),
+           fill = sex)) +
+      xlab("Species") +
+  ylab("Number")+ 
+  geom_bar(position = "dodge2") 
+```
+
+## Parlements
+
+```{r}
+library(readxl)
+library(here)
+
+data <- read_xlsx(here("data", "women_in_parliament-historical_database-1945_to_2018.xlsx"))
+data
+```
+
+Les données pour chaque ligne:
+
+Le pays, la région dans le pays, si c'est une Election ou une réelection, l'année, le mois, le type de chambre, le nombre de sièges dans la chambre, le nombre de femmes, le % de femme t des notres qui peuvent donner des infos sur le type d'assemblée
+
+### Assemblée constituante française 
+
+4eme république: 27 octobre 1946
+
+```{r}
+subsetData <- subset(data, Year==1946 & Country=="France" & NOTES=="Constitutional Assembly")
+subsetData
+
+percentOfWomen <- subsetData[c("% Of Women in Chamber")] # le pourcentage de femmes
+
+men = 1 - percentOfWomen
+```

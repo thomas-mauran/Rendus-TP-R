@@ -27,24 +27,161 @@ temps_average
 **Que les données de Montpellier**
 
 ```{r}
-# temps_montpellier <-subset(temps_average, city == "Montpellier")
-
+temps_montpellier <-subset(temps_average, city == "Montpellier")
+temps_montpellier
 ```
 
 **Les titres:**
 
 ```{r}
-# head(temps_montpellier)
+head(temps_montpellier)
 ```
 
 ### Description du tableau
 
-notre tableau de donnée:
+Le tableau fournit la moyenne des températures pour chaque jour de
+l'année de 1950 à 2019 pour Montpellier, Embrun et Lille. Les colonnes
+comprennent le nom de la ville, le numéro du jour de l'année (de 1 à
+366), le mois correspondant, ainsi que la moyenne des températures en
+degrés Celsius pour chaque jour de l'année sur la période spécifiée. Les
+données ont été obtenues auprès d'ECAD.
 
-**Taille**: `r here()`
+## Données statistiques de base
 
-**Les variables:**
+**Température moyenne sur montpellier à l'année**
 
--   City:
+```{r}
+mean(temps_montpellier$temperature)
+```
 
-    -   
+**Jours le plus froid**
+
+```{r}
+min_day <- temps_montpellier[which.min(temps_montpellier$temperature),]$day_of_year
+as.Date(min_day, origin="2020-01-01")
+```
+
+c'est en géneral le 9 janvier qu'il fait le plus froid
+
+**Jours le plus chaud**
+
+```{r}
+max_day <- temps_montpellier[which.max(temps_montpellier$temperature),]$day_of_year
+as.Date(max_day, origin="2020-01-01")
+```
+
+C'est en général le 29 juillet qu'il fait le plus chaud
+
+## Températures representés en y
+
+```{r}
+ggplot(temps_montpellier, 
+       aes(
+         x = day_of_year, 
+         y = temperature )) +
+geom_line(size = 1) +
+theme_light()
+```
+
+**Variation de graphique**
+
+```{r}
+ggplot(temps_montpellier, 
+       aes(
+         x = day_of_year, 
+         y = temperature )) +
+geom_line(size = 1, linetype = "dotted", color="orange") +
+theme_light()
+```
+
+## Plusieurs villes
+
+```{r}
+ggplot(temps_average, 
+       aes(
+         x = day_of_year, 
+         y = temperature, 
+         color = city)) +
+geom_line(size = 1) +
+theme_light()
+```
+
+## Température représentées en color
+
+```{r}
+ggplot(temps_average, 
+       aes(
+         x = day_of_year, 
+         y = city, 
+         color = temperature)) +
+geom_point(size = 7) +
+theme_light()
+```
+
+## Mélanges
+
+**1/ Températures en y, avec une couleur et un type de ligne différent
+pour chaque ville.**
+
+```{r, warning = FALSE}
+ggplot(temps_average, 
+       aes(
+         x = day_of_year, 
+         y = temperature, 
+         color = city, 
+         linetype = city )) +
+geom_line(size = 1) +
+      labs(x = "Jour de l'année", y = "Température (°C)", color = "Villes", linetype= "Villes") +
+
+  ggtitle("Températures en y, avec une couleur et un type de ligne différent\n pour chaque ville")
+theme_light()
+```
+
+**2.Températures en y, un type de ligne différent pour chaque ville, et
+une couleur pour chaque mois**
+
+```{r}
+ggplot(temps_average, aes(
+  x = day_of_year, 
+  y = temperature, 
+  color = factor(month))) +
+   ggtitle("Températures en y, un type de ligne différent pour chaque ville,\n et une couleur pour chaque mois") +
+  geom_line(aes(linetype = city), size = 1)  +
+  scale_linetype_manual(values = c("solid", "dashed", "dotted")) +
+  labs(x = "Jour de l'année", y = "Température (°C)", color = "Mois") +
+  scale_color_discrete(labels = month.name) +
+  theme_light()
+
+```
+
+**3/ Températures en color, représentées verticalement.**
+
+```{r}
+ggplot(temps_average, 
+  aes(
+    x = city, 
+    y = day_of_year, 
+    color = temperature)) +
+geom_point(size = 7) +
+    labs(x = "Ville", y = "Jours de l'année", color = "Températures") +
+
+  ggtitle("Températures en color, représentées verticalement") +
+theme_light()
+```
+
+**Graphe donnant le mois en fonction du jour de l'année.**
+
+```{r}
+
+ggplot(temps_average, 
+       aes(
+         y = day_of_year, 
+         x = month, )) +
+geom_line(size = 1, color= "orange") +
+  ggtitle("Graphe donnant le mois en fonction du jour de l'année")+
+  scale_x_continuous(breaks = 1:12, labels = month.name) +
+      labs(x = "Mois", y = "Jours de l'année") +
+
+theme_light() + 
+  theme(axis.text.x = element_text(angle = -30, vjust = 0.5))
+```

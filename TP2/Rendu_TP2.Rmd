@@ -19,6 +19,7 @@ boxoffice <- data.frame (
 **Diagramme en barre**
 
 ```{r}
+library(ggplot2)
 ggplot(boxoffice,
        aes(x = country,
            y = number)) + 
@@ -125,7 +126,6 @@ ggplot(penguins_nomissing,
 **Variation**
 
 ```{r}
-colnames(tt) <- fct_relevel(c("species", "number"))
 
 ggplot(penguins_nomissing,
        aes(x = fct_relevel(species, "Chinstrap", "Gentoo", "Adelie"),
@@ -141,7 +141,6 @@ ggplot(penguins_nomissing,
 
 library(readxl)
 library(here)
-library(readxl)
 
     
 data <- read_xlsx(here("data", "women_in_parliament-historical_database-1945_to_2018.xlsx"),
@@ -159,7 +158,7 @@ Le pays, la région dans le pays, si c'est une Election ou une réelection, l'an
 
 4eme république: 27 octobre 1946
 
-```{r}
+```{r, warning=FALSE }
 subsetData <- subset(data, Year==1946 & Country=="France" & NOTES=="Constitutional Assembly")
 subsetData
 percentOfWomen <- subsetData[c("% Of Women in Chamber")] # le pourcentage de femmes
@@ -170,7 +169,7 @@ men # pourcentage d'homme
 
 ### Diagramme en barre
 
-```{r}
+```{r, warning=FALSE }
 library(ggplot2)
 subsetData$homme <- 1 - subsetData$`% Of Women in Chamber`
 
@@ -192,7 +191,7 @@ Ici je trouve cela plus pertinent de representer les données das un graph stack
 
 ### Graph en secteur
 
-```{r}
+```{r, warning=FALSE }
 library(ggplot2)
 library(ggforce)
 
@@ -206,11 +205,11 @@ pie <- ggplot(smallTable,
                    amount = percent,
                    fill = fct_relevel(category, "Women", "Men"))) +
   coord_fixed() + 
-  ggtitle("Diagramme en secteurs") + 
+  ggtitle("Proportion de femmes dans l'assemblée constituante \nde la quatrième république Française") + 
   geom_arc_bar(stat = "pie", color = "white", size = 0.2) + 
   scale_fill_manual(values = c("#FF69B4", "#4169E1")) +
   theme_void() +
-  theme(plot.title = element_text(size = 20, hjust = 0.5),
+  theme(plot.title = element_text(size = 15, hjust = 0.5),
         legend.position = "right",
         legend.text = element_text(size = 14),
         legend.title = element_blank(),
@@ -226,7 +225,7 @@ Date: adoptée le 28 septembre 1958, promulguée le 4 octobre 1958
 
 j'ai prit le type de chambre lower, je n'ai pas pu trouver la différence entre lower et upper mais lower avait plus de siège donc je l'ai selectionné
 
-```{r}
+```{r, warning=FALSE }
 subsetData5eme <- subset(data, Year==1958 & Country=="France" & `Chamber Type`=="Lower")
 subsetData5eme
 percentOfWomen <- subsetData[c("% Of Women in Chamber")] # le pourcentage de femmes
@@ -241,11 +240,11 @@ pie <- ggplot(smallTable,
                    amount = percent,
                    fill = fct_relevel(category, "Women", "Men"))) +
   coord_fixed() + 
-  ggtitle("Diagramme en secteurs") + 
+  ggtitle("Proportion de femmes dans l'assemblée constituante \nde la quatrième république Française") + 
   geom_arc_bar(stat = "pie", color = "white", size = 0.2) + 
   scale_fill_manual(values = c("#FF69B4", "#4169E1")) +
   theme_void() +
-  theme(plot.title = element_text(size = 20, hjust = 0.5),
+  theme(plot.title = element_text(size = 14, hjust = 0.5),
         legend.position = "right",
         legend.text = element_text(size = 14),
         legend.title = element_blank(),
@@ -256,14 +255,14 @@ pie
 
 ## Evolution de la proportion de femmes dans l\'assemblée basse Colombienne de 1964 à 2014
 
-```{r}
+```{r, warning=FALSE }
 subsetDataColombia <- subset(data,  Country=="Colombia" & `Chamber Type` == "Lower")
 subsetDataColombia
 ```
 
 ### Données 
 
-```{r}
+```{r, warning=FALSE }
 subsetDataColombia$homme <- 1 - subsetDataColombia$`% Of Women in Chamber`
 
 smallTableColombia <- data.frame(
@@ -276,7 +275,7 @@ smallTableColombia <- data.frame(
 
 ### Diagramme barre empilées 
 
-```{r}
+```{r, warning=FALSE }
 ggplot(smallTableColombia,
        aes(x = year, y = percent, fill = category)) +
   geom_bar(position = "stack", stat = "identity") +
@@ -287,7 +286,7 @@ ggplot(smallTableColombia,
 
 ### Diagramme en secteur 
 
-```{r}
+```{r, warning=FALSE }
 pie <- ggplot(smallTableColombia,
                aes(x0 = year, y0 = year, r0 = 70, r = 0,
                    amount = percent,
@@ -297,7 +296,7 @@ pie <- ggplot(smallTableColombia,
   geom_arc_bar(stat = "pie", color = "white", size = 0.2) + 
   scale_fill_manual(values = c("pink", "blue")) +
   theme_void() +
-  theme(plot.title = element_text(size = 12, hjust = 0.5),
+  theme(plot.title = element_text(size = 11, hjust = 0.5),
         legend.position = "right",
         legend.text = element_text(size = 10),
         legend.title = element_blank(),
@@ -313,7 +312,7 @@ pie
 
 **Data**
 
-```{r}
+```{r, warning=FALSE }
 subsetDataItalie <- subset(data, (Year == "1948" | Year == "1976" | Year == "2008") &
                                 Country == "Italy" & `Chamber Type` == "Lower"
                          )
@@ -323,7 +322,7 @@ subsetDataItalie
 
 **Premier graph**
 
-```{r}
+```{r, warning=FALSE }
 library(ggplot2)
 
 subsetDataItalie$homme <- 1 - subsetDataItalie$`% Of Women in Chamber`
@@ -348,7 +347,7 @@ ggplot(smallDataItalie,
 
 ```
 
-```{r}
+```{r, warning=FALSE }
 
 subsetDataItaliePie <- subset(data,
                                 Country == "Italy" & `Chamber Type` == "Lower"
@@ -373,7 +372,7 @@ pie <- ggplot(smallTableItalie,
   geom_arc_bar(stat = "pie", color = "white", size = 0.2) + 
   scale_fill_manual(values = c("pink", "blue")) +
   theme_void() +
-  theme(plot.title = element_text(size = 12, hjust = 0.5),
+  theme(plot.title = element_text(size = 11, hjust = 0.5),
         legend.position = "right",
         legend.text = element_text(size = 10),
         legend.title = element_blank(),

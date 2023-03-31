@@ -12,6 +12,8 @@ editor_options:
 
 # TP 1_2 Températures moyennes à montpellier {#sec-tp-1 style="text-align: center"}
 
+![](images/image.jpg){width="564"}
+
 ## Chargement des données
 
 ```{r}
@@ -20,7 +22,7 @@ library(ggplot2)
 
 temps_average <- read.csv(file = here("temp_average.csv"))
 here()
-temps_average
+
 
 ```
 
@@ -28,7 +30,7 @@ temps_average
 
 ```{r}
 temps_montpellier <-subset(temps_average, city == "Montpellier")
-temps_montpellier
+
 ```
 
 **Les titres:**
@@ -184,4 +186,35 @@ geom_line(size = 1, color= "orange") +
 
 theme_light() + 
   theme(axis.text.x = element_text(angle = -30, vjust = 0.5))
+```
+
+## Mise en forme
+
+-   Question : Quelles sont les températures moyennes pour chaque jour
+    de l'année et pour chaque ville ?
+
+-   Individu : Jour de l'année
+
+-   Population : Période de 1950 à 2019 pour les villes de Montpellier,
+    Embrun et Lille
+
+-   Échantillon : Températures mesurées pour chaque jour de l'année pour
+    les villes de Montpellier, Embrun et Lille
+
+-   Variable mesurée : Température en degrés Celsius
+
+J'avais déjà bien poffiné mon graphique favoris dans la question
+précedente :
+
+```{r}
+ggplot(temps_average, aes(
+  x = day_of_year, 
+  y = temperature, 
+  color = factor(month))) +
+   ggtitle("Températures en y, un type de ligne différent pour chaque ville,\n et une couleur pour chaque mois") +
+  geom_line(aes(linetype = city), size = 1)  +
+  scale_linetype_manual(values = c("solid", "dashed", "dotted")) +
+  labs(x = "Jour de l'année", y = "Température (°C)", color = "Mois") +
+  scale_color_discrete(labels = month.name) +
+  theme_light()
 ```

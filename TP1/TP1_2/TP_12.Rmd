@@ -125,16 +125,15 @@ theme_light()
 **1/ Températures en y, avec une couleur et un type de ligne différent
 pour chaque ville.**
 
-```{r, warning = FALSE}
+```{r, warning = FALSE, message = FALSE, echo = FALSE, include = FALSE}
 ggplot(temps_average, 
        aes(
          x = day_of_year, 
          y = temperature, 
          color = city, 
          linetype = city )) +
-geom_line(size = 1) +
-      labs(x = "Jour de l'année", y = "Température (°C)", color = "Villes", linetype= "Villes") +
-
+  geom_line(size = 1) +
+  labs(x = "Jour de l'année", y = "Température (°C)", color = "Villes", linetype= "Villes") +
   ggtitle("Températures en y, avec une couleur et un type de ligne différent\n pour chaque ville")
 theme_light()
 ```

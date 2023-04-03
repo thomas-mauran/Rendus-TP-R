@@ -10,7 +10,7 @@ editor_options:
 
 # TP 1 Poissons du lez {#sec-tp-1 style="text-align: center"}
 
-![](https://media.tenor.com/Mb5on1J7rsYAAAAd/fish-sucking.gif){style="tex-align: center"
+![](https://media.tenor.com/vuz-av-DYZIAAAAd/fish.gif){style="tex-align: center"
 width="200"}
 
 ## Experience statistique {style="text-align: left"}

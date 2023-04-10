@@ -90,7 +90,7 @@ barplot(res, col = names(res) )
 Quand on compile plusieurs fois on obtient toujours les memes résultats
 car la seed est la meme
 
-### Avec 10 poissons 
+### Avec 10 poissons
 
 ```{r}
 set.seed(12)

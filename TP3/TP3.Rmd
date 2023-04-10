@@ -3,11 +3,14 @@ title: "TP3"
 author: "Thomas Mauran"
 date: "2023-04-04"
 output:
+  pdf_document: default
   html_document:
     df_print: paged
 ---
 
-# TP-3 Variables quantitatives {#sec-tp-1 style="text-align: center"}
+# TP-3 Everest {#sec-tp-1 style="text-align: center"}
+
+Liens du gif (latex n'accepte pas les gifs): <https://media.tenor.com/g9bG3yk53YEAAAAM/god-of-war-god-of-war1.gif>
 
 ## Nombres d'enfants {style="text-align: left"}
 
@@ -201,7 +204,7 @@ Avec cette représentation on se rend bien compte de plusieurs choses. Au fil de
 
 **Modalités :** Pour le statut de l'expédition, la modalité est soit "réussie" soit "échouée". Pour l'utilisation d'oxygène, la modalité est soit "avec oxygène" soit "sans oxygène". Pour l'âge des membres, la modalité est un nombre.
 
-```{r}
+```{r, warning=FALSE}
 
 tab <- subset(expeditions, peak_name == "Everest" & !is.na(age))
 
@@ -219,7 +222,7 @@ ggplot(tab, aes(x = oxygen_used, y = age, fill = success)) +
 
 On remarque que la distribution des âges est plus étalée dans le cas des ascensions réussies avec oxygène par rapport aux ascensions réussit sans oxygène.
 
-```{r}
+```{r, warning=FALSE}
 tab <- subset(expeditions, peak_name == "Everest" & !is.na(age))
 
 ggplot(tab, aes(x = oxygen_used, y = age, fill = success)) +
@@ -248,7 +251,7 @@ ggplot(tab, aes(x = oxygen_used, y = age, fill = success)) +
 
 **Modalités :** Pour le statut de l'expédition, la modalité est soit "réussie" soit "échouée". Pour la réalisation en équipe, la modalité est soit "En équipe" soit "Seul". Pour l'âge des membres, la modalité est un nombre.
 
-```{r}
+```{r, warning=FALSE}
 tab <- subset(expeditions, !is.na(age))
 
 ggplot(tab, aes(x = solo, y = age, fill = success)) +

@@ -1,0 +1,92 @@
+---
+title: "TP4"
+author: "Thomas Mauran"
+date: "2023-04-25"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# TP-4 Shiny {#sec-tp-1 style="text-align: center"}
+
+Liens du gif (latex n'accepte pas les gifs):
+
+## Pingouins d'Antarctique {style="text-align: left"}
+
+```{r}
+library(palmerpenguins)
+penguins <- na.omit(penguins)
+knitr::kable(head(penguins))
+```
+
+**Individu**: Un pingouin
+
+**Population**: l'ensemble des pingouins de l'antarctique
+
+**Variable**: Variable quantitative, la longueur des ailes des pingouins
+
+**L'échantillon:** 333 pingouins de l'archipels
+
+**Modalités:** Chiffre en mm représentant la longueur des ailes
+
+### Representation en histograme
+
+```{r}
+library(ggplot2)
+ggplot(penguins,
+       aes(flipper_length_mm,
+           fill = species)) +
+      xlab("Flipper size") +
+  ylab("Number of penguins")+ 
+  geom_histogram(position = "identity", alpha=0.8,) 
+```
+
+### Autre representation 
+
+```{r}
+library(ggplot2)
+ggplot(penguins,
+       aes(x = species,
+           y = flipper_length_mm,
+           fill = species)) +
+  xlab("Species") +
+  ylab("Flipper size") + 
+  theme_minimal() +
+  geom_boxplot(alpha = 0.8)
+
+```
+
+### Avec le sexe
+
+```{r}
+library(ggplot2)
+ggplot(penguins,
+       aes(x = sex,
+           y = flipper_length_mm,
+           fill = species)) +
+  xlab("Species") +
+  ylab("Flipper size") + 
+  theme_minimal() +
+  geom_boxplot(alpha = 0.8)
+
+```
+
+## Dimensions du bec
+
+```{r}
+library(ggplot2)
+ggplot(penguins,
+       aes(x = bill_depth_mm,
+           y = bill_length_mm,
+           color = species)) +
+  xlab("Depth") +
+  ylab("Length") + 
+  theme_minimal() +
+  geom_point(alpha = 0.8) +
+  geom_smooth(method = "lm", se = FALSE)
+
+```
+
+On se rend compte que plus le bec est long plus il est aussi large, les droites sont croissantes ce qui nous permet de mieux visualiser cet effet.
